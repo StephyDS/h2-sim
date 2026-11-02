@@ -45,7 +45,7 @@ perm = [100, 100, 10] .* milli*darcy;
 rock = makeRock(G, perm, 0.2);
 
 %% Fluid Properties
-compFluid = TableCompositionalMixture({'Water', 'Hydrogen', 'CarbonDioxide', 'Methane', 'AceticAcid'}, ...
+compFluid = h2BiochemCompositionalMixture({'Water', 'Hydrogen', 'CarbonDioxide', 'Methane', 'AceticAcid'}, ...
     {'H2O', 'H2', 'CO2', 'C1', 'CH3COOH'});
 biochemFluid = TableBioChemMixture({'MethanogenicArchae','AcetogenicBacteria'},{'bactM','bactA'});
 
@@ -137,6 +137,9 @@ nls = NonLinearSolver(); nls.LinearSolver = lsolve;
 
 problem_nobact = packSimulationProblem(state0_nobact, model_nobact, schedule, ...
     'Benchmark_NoBacteria3', 'NonLinearSolver', nls);
+simulatePackedProblem(problem_nobact);%,'restartStep', 1);
+[ws_nobact, states_nobact] = getPackedSimulatorOutput(problem_nobact);
+results_nobact = postProcessResults(states_nobact, ws_nobact, model_nobact, 'nobact');
 
 %% --- Simulation 2: With bacteria ---
 model_bact = BiochemistryModel(G, rock, fluid, compFluid, biochemFluid, true, backend, ...
@@ -192,7 +195,7 @@ else
     plotBenchmarckAEGE2023MetAcet(numel(states_nobact), ...
         results_nobact.pressure, results_bact.pressure, ...
         H2_loss, results_nobact.totMassH2, results_bact.totMassH2, ...
-        results_bact.totMassCH3COOH,G, states_bact, nbact0);
+        results_bact.totMassCH3COOH,G, states_bact,model_bact,nbact0);
 end
 %% Post-processing Function
 function results = postProcessResults(states, ws, model, caseType)

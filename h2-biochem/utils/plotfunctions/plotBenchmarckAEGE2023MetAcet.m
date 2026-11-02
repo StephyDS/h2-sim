@@ -1,5 +1,5 @@
 function plotBenchmarckAEGE2023MetAcet(nT,pressureNobact,pressurebact,H2loss,...
-    totMassH2Nobact,totMassH2bact,totMassProdbact,G,statesBact,nbact0)
+    totMassH2Nobact,totMassH2bact,totMassProdbact,G,statesBact,model, nbact0)
 %
 % plotEosPRSW -- Plot the pressure, H2 loss due to microbial activity,
 % the total mass of H2 along with time as well as the evolution of the
